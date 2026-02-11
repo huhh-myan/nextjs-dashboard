@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { error } from 'console';
+import { DeleteState } from '../ui/invoices/buttons';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -29,8 +30,6 @@ export async function authenticate(
         throw error;
     }
 }
-
-
 
 export type State = {
     errors?: {
@@ -147,18 +146,23 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
     redirect('/dashboard/invoices');
 }
 
-export async function deleteInvoice(id: string): Promise<void>{
+export async function deleteInvoice(id: string, prevState: DeleteState, _formData: FormData) {
+
+    
+
+    
     // throw new Error('Failed to Delete Invoice');
 
-    // try{
-    //     await sql`DELETE FROM invoices WHERE id=${id}`
-    // }catch(error){
-    //     console.log(error);
-    //     return {
-    //         message: "Database Error: Failed to Delete Invoice"
-    //     }
-    // }
+    try{
+        await sql`DELETE FROM invoices WHERE id=${id}`
+    }catch(error){
+        console.log(error);
+        return {
+            message: "Database Error: Failed to Delete Invoice"
+        }
+    }
     // await sql`DELETE FROM invoices WHERE id = ${id}`;
     
-    // revalidatePath('/dashboard/invoices');
+    revalidatePath('/dashboard/invoices');
+    return { message: null }
 }
